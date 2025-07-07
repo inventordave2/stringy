@@ -5,14 +5,11 @@
 #include "./../colour/colour.h"
 #include "./stringy.h"
 
-
-static unsigned long long strlen_( char* );
-#define strlen strlen_
-
 static char* getstring( char* );
 static char* substring( char*, unsigned long long start, unsigned long long end );
 static char* zalloc( unsigned long long );
 static unsigned long long strlen_( char* str );
+#define strlen strlen_
 static char* ull2digitstr( unsigned long long );
 
 void InitStringy()	{
@@ -22,8 +19,8 @@ void InitStringy()	{
 	stringy.zalloc		= zalloc;
 	stringy.strlen		= strlen_;
 	stringy.ull2digitstr= ull2digitstr;
-	
-	stringy.colourize	= colour.fmt;
+	stringy.strlen		= strlen_;
+
 }
 
 
@@ -103,3 +100,4 @@ static char* substring( char* str, unsigned long long start, unsigned long long 
 	
 	return r;
 }
+
