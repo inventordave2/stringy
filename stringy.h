@@ -8,14 +8,15 @@ typedef struct stringy_t	{
 	
 	unsigned long long 	(*strlen)			( char* ); 
 	char* 				(*getstring) 		( char* );
+	char* 				(*substring)		( char*, unsigned long long, unsigned long long );
 	char* 				(*zalloc)			( unsigned long long );
 	char* 				(*ull2digitstr)		( unsigned long long );
-	
+	void				(*flipstr)			(char * in, char * out);
 	char*				(*safecat)			( char*, char* );
 
 } stringy_t;
 
-extern const struct stringy_t stringy;
+extern struct stringy_t* stringy;
 extern void InitStringy();
 
 #endif

@@ -1,26 +1,35 @@
 /* STRINGY_C */
 
 #include <stdlib.h>
-
-#include "./../colour/colour.h"
+#include <string.h>
 #include "./stringy.h"
+#include "./../colour/colour.h"
 
-static char* getstring( char* );
 static char* substring( char*, unsigned long long start, unsigned long long end );
-static char* zalloc( unsigned long long );
+//static char* ull2digitstr( unsigned long long );
+static char* getstring( char* str );
+static char* zalloc( unsigned long long size );
 static unsigned long long strlen_( char* str );
-#define strlen strlen_
-static char* ull2digitstr( unsigned long long );
+static void flipstr(char * in, char * out);
+
+struct stringy_t* stringy;
 
 void InitStringy()	{
 
-	stringy.getstring	= getstring;
-	stringy.substring	= substring;
-	stringy.zalloc		= zalloc;
-	stringy.strlen		= strlen_;
-	stringy.ull2digitstr= ull2digitstr;
-	stringy.strlen		= strlen_;
+	struct stringy_t _stringy;
+	
+	_stringy.getstring	= getstring;
+	_stringy.substring	= substring;
+	_stringy.zalloc		= zalloc;
+	//_stringy.ull2digitstr= ull2digitstr;
+	_stringy.strlen		= strlen_;
+	_stringy.flipstr	= flipstr;
 
+	struct stringy_t* temp_stringy_obj = (struct stringy_t*)malloc( sizeof( struct stringy_t ) );
+	*temp_stringy_obj = _stringy;
+  	stringy = temp_stringy_obj;
+	
+	return;
 }
 
 
@@ -62,6 +71,21 @@ static char* getstring( char* str )	{
 	return r;
 }
 
+int cmp(char *a, char *b) { // returns true (1) if the 2 c-strings match, as it should...
+
+	return (strcmp(a, b) == 0);
+}
+
+void rotate(unsigned int * argc, char * argv[] )	{
+
+	for(int i = 0; i < (*argc - 1); i++)	{
+		
+		argv[i] = argv[i+1];
+	}
+
+	argv[*argc - 1] = '\0';
+	*argc -= 1;
+}
 static char* substring( char* str, unsigned long long start, unsigned long long end )	{
 	
 	unsigned long long count = 0;
@@ -101,3 +125,12 @@ static char* substring( char* str, unsigned long long start, unsigned long long 
 	return r;
 }
 
+void flipstr(char * in, char * out)	{
+	
+	unsigned int len = strlen(in);
+	
+	for(signed int i = len - 1; i >= 0; i--)
+		*(out++) = *(in+i);
+	
+	*out = '\0';
+}
