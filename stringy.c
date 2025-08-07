@@ -1,22 +1,75 @@
 /* STRINGY_C */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "./stringy.h"
+#include "./str_concat.h"
 #include "./../colour/colour.h"
+
+static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me, Da Dizzle. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)";
+
 
 static char* substring( char*, unsigned long long start, unsigned long long end );
 //static char* ull2digitstr( unsigned long long );
 static char* getstring( char* str );
+static char* concat( char*,char* );
 static char* zalloc( unsigned long long size );
 static unsigned long long strlen_( char* str );
 static void flipstr(char * in, char * out);
 static char** split( char*, char delim, unsigned );
 static char* trim( char* );
-long long find_first_of( char*, char );
-long long find_next_of( char*, char );
+static char* safecat( char*,char* );
+uint64_t find_first_of( char*, char );
+uint64_t find_next_of( char*, char );
+void free_stringy( char* ptr );
+static void nl();
+static FILE* writeToFile ( FILE*, char*, uint8_t );
 
-long long find_first_of( char* str, char delim )	{
+
+static char* concat( char* lhs, char* rhs )	{
+	
+	uint64_t len = strlen(lhs)+strlen(rhs)+1;
+	
+	char* lvalue = (char*)malloc( len );
+	
+	strcpy( lvalue, lhs );
+	strcat( lvalue, rhs );
+	
+	free( lhs );
+	lhs = lvalue;
+	
+	return lhs;
+	
+}
+
+static FILE* writeToFile( FILE* fp, char* str, uint8_t ft )	{
+
+	FILE* f;
+	uint8_t td = 0;
+	uint8_t flag = 0;
+
+	if( fp==NULL )
+		flag = 1, f = fopen( "file1.txt", "w+" );
+	else
+		f = fp;
+	
+	fprintf( f, str );
+	
+	if( flag==1 )
+		fclose(f);
+	
+	return f;
+}		
+
+
+static void nl()	{
+	
+	printf( "\n" );
+	return;
+}
+
+uint64_t find_first_of( char* str, char delim )	{
 	
 	unsigned x = 0;
 	
@@ -31,7 +84,7 @@ long long find_first_of( char* str, char delim )	{
 	return -1;
 }
 
-long long find_next_of( char* str, char delim )	{
+uint64_t find_next_of( char* str, char delim )	{
 
 	static unsigned y = 0;
 	unsigned x = y;
@@ -58,7 +111,6 @@ long long find_next_of( char* str, char delim )	{
 struct stringy_t* stringy;
 static uint8_t stringy_activated = 0;
 
-
 void InitStringy()	{
 
 	if( stringy_activated==1 )
@@ -72,13 +124,48 @@ void InitStringy()	{
 	_stringy->strlen		= strlen_;
 	_stringy->flipstr	= flipstr;
 	_stringy->trim		= trim;
-	_stringy->split		= split;
+	//_stringy->split		= split;
 	_stringy->find_first_of = find_first_of;
-
-  	stringy = _stringy;
+	_stringy->safecat = safecat;
+	_stringy->free = free_stringy;
+  	_stringy->nl = nl;
+	_stringy->concat = concat;
+	stringy = _stringy;
+	
 	
 	stringy_activated = 1;
 	return;
+}
+
+void free_stringy( char* ptr )	{
+
+	free( ptr );
+	ptr = NULL;
+	return;
+}
+
+
+static char* safecat( char* head, char* tail )	{
+	
+	if(
+		head==NULL ||
+		strlen(head)==0 ||
+		tail==NULL ||
+		strlen(tail)==0
+	  )
+		return NULL;
+	
+
+	
+	char* _ = (char*)malloc( strlen(head)+strlen(tail)+1 );
+	if( _==NULL )
+		return NULL;
+
+
+	strcpy( _,head );
+	strcat( _,tail );
+	
+	return _;
 }
 
 static char* trim( char* in )	{
@@ -149,13 +236,13 @@ static char* getstring( char* str )	{
 	return r;
 }
 
-int cmp(char *a, char *b) { // returns true (1) if the 2 c-strings match, as it should...
+int cmp(char* a, char* b) { // returns true (1) if the 2 c-strings match, as it should...
 
 	return (strcmp(a, b) == 0);
 }
 
 
-void rotate(unsigned int * argc, char * argv[] )	{
+void rotate(unsigned int* argc, char* argv[] )	{
 
 	for(int i = 0; i < (*argc - 1); i++)	{
 		
@@ -214,3 +301,6 @@ void flipstr(char * in, char * out)	{
 	
 	*out = '\0';
 }
+
+
+#include "./str_concat.c"

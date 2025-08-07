@@ -1,18 +1,20 @@
-# Makefile for 'Stringy'
+ # Makefile for 'Stringy'
 
 compiler=gcc
-analysis=-g -DDEBUG -O0
+cflags=-Wpedantic -Werror -Wall
+debug=-g -DDEBUG
+optim=-O0
 name=stringy
 noexe=-c
 
-stringyd: str_concat ./stringy.c ./stringy.h
-	$(compiler) $(analysis) ./stringy.c ./$(name)_concat.o $(noexe) -o ./$(name)d.o
+stringyd: ./stringy.c ./stringy.h ./str_concat.c ./str_concat.h
+	$(compiler) $(cflags) $(debug) $(optim) $(noexe) -o ./$(name)d.o ./stringy.c
 
-str_concat: ./str_concat.c ./str_concat.h
-	$(compiler) $(analysis) ./str_concat.c $(noexe) -o ./$(name)_concat.o
+stringy: ./stringy.c ./stringy.h ./str_concat.c ./str_concat.h
+	$(compiler) -O3 $(noexe) -o ./$(name).o ./stringy.c
 
 clean:
-	rm *.o
+	del ./*.o
 
 wipe: clean
 

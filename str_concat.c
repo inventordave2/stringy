@@ -3,15 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "str_concat.h"
+#include "./str_concat.h"
 #include "./../colour/colour.h"
 
-#define MAX_FILE_PATH_LENGTH 261
-
-
 enum status { OK, NO_INPUT, QUIT } status;
-
-enum status input(char *prmpt, char *buff, size_t sz)	{
+enum status input(char* prmpt, char* buff, size_t sz)	{
 
     int ch, extra;
 
@@ -54,7 +50,6 @@ enum status input(char *prmpt, char *buff, size_t sz)	{
 	
     return OK;	
 }
-
 enum status inputNum(char *prmpt, char *buff, size_t sz)	{
 	
 	if(input(prmpt, buff, 1) != OK)
@@ -66,133 +61,121 @@ enum status inputNum(char *prmpt, char *buff, size_t sz)	{
 	return OK;
 }
 
-
 /**
-	char * strc(char *str1, char *str2);
-	char * strci(char *str1, char *str2);
+char* strc(char* str1, char* str2);
+char* strci(char* str1, char* str2);
 
-	char * strd(char *str1, char *str2);
-	char * strdi(char *str1, char *str2);
+char* strd(char* str1, char* str2);
+char* strdi(char* str1, char* str2);
 
-	void strp(char *str1, char *str2);
-	void strpi(char *str1, char *str2);
+void strp(char* str1, char* str2);
+void strpi(char* str1, char* str2);
 
-	void strpd(char *str1, char *str2);
-	void strpdi(char *str1, char *str2);
+void strpd(char* str1, char* str2);
+void strpdi(char* str1, char* str2);
 */
 
 /**
-	STRC (str1, str2)	Returns a (char *) of str1 + str2. (+ is a concatenation operator)
+STRC (str1, str2)	Returns a (char *) of str1 + str2. (+ is a concatenation operator)
+*/
+char* strc(char* str1, char* str2)	{
+
+	// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
+	// preserved. Embedding the strc( function as an argument in a calling function call
+	// will mean the reference is lost, thus the memory will never be freed.
 	
-*/
-char * strc(char *str1, char *str2)	{
-
-		// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
-		// preserved. Embedding the strc( function as an argument in a calling function call
-		// will mean the reference is lost, thus the memory will never be freed.
-		
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		
-		strcpy(r, str2);
-		strcat(r, str1);
-		
-		return r;
+	char* r = (char*)malloc(strlen(str1)+strlen(str2)+1);
+	
+	strcpy(r, str1);
+	strcat(r, str2);
+	
+	return r;
 }
 
-char * strci(char *str1, char *str2)	{
+char* strci(char* str1, char* str2)	{
 	
-	char * output = (char *)malloc(MAX_FILE_PATH_LENGTH);
+	char * output = (char*)malloc(strlen(str1)+strlen(str2)+1);
 	
-	strcpy(output, str2);
-	strcat(output, str1);
+	strcpy(output, str1);
+	strcat(output, str2);
 	strcat(output, NORMAL);
 	
 	return output;
 }
 
-char * strd(char *str1, char *str2)	{
+char* strd(char* str1, char* str2)	{
 
-		// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
-		// preserved. Embedding the strc( function as an argument in a calling function call
-		// will mean the reference is lost, thus the memory will never be freed.
+	// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
+	// preserved. Embedding the strc( function as an argument in a calling function call
+	// will mean the reference is lost, thus the memory will never be freed.
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		
-		r = strc(str1, str2);
-		
-		free(str1); free(str2);
-		
-		return r;
+	char* r;	
+	r = strc(str1, str2);
+	free(str1); free(str2);
+	
+	return r;
 }
 
-char * strdi(char *str1, char *str2)	{
+char* strdi(char* str1, char* str2)	{
 
-		// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
-		// preserved. Embedding the strc( function as an argument in a calling function call
-		// will mean the reference is lost, thus the memory will never be freed.
+	// Leaks. Heap-allocated storage for 'r' can only be freed if the handle to it is
+	// preserved. Embedding the strc( function as an argument in a calling function call
+	// will mean the reference is lost, thus the memory will never be freed.
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		
-		r = strci(str1, str2);
-		
-		free(str1); free(str2);
-		
-		return r;
+	char * r;
+	r = strci(str1, str2);
+	free(str1); free(str2);
+
+	return r;
 }
 
 /**
-	STRP(str1, str2)	- PRINT 2 strcings to STDOUT -
-	
-	Concatenates, and prints the 2 strcings to STDOUT.
-	
-	str1, str2 are preserved.
-	
+STRP(str1, str2)	- PRINT 2 strcings to STDOUT -
+Concatenates, and prints the 2 strcings to STDOUT.
+str1, str2 are preserved.	
 */
-void strp(char *str1, char *str2)	{
+void strp(char* str1, char* str2)	{
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		r = strc(str1, str2);
-		
-		printf("%s", r);
-		free(r);
+	char* r;
+	r = strc(str1, str2);
+	printf("%s", r);
+	free(r);
 }
 
-void strpi(char *str1, char *str2)	{
+void strpi(char* str1, char* str2)	{
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		r = strci(str1, str2); 
-		
-		printf("%s", r);
-		free(r);
+	char* r;
+	r = strci(str1, str2); 
+	
+	printf("%s", r);
+	free(r);
 }
 
 /**
-	STRPD(str1, str2)	- PRINT, then free() str1 & str2 (DELETE) -
-	
-	Concatenates, and prints the 2 strcings to STDOUT, but then
-	frees/deletes the references to str1 & str2.
-	
+STRPD(str1, str2)	- PRINT, then free() str1 & str2 (DELETE) -
+Concatenates, and prints the 2 strcings to STDOUT, but then
+frees/deletes the references to str1 & str2.
 */
-void strpd(char *str1, char *str2)	{
+void strpd(char* str1, char* str2)	{
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		r = strd(str1, str2);
-		
-		free(str1);
-		free(str2);
-		
-		printf("%s", r);
-		free(r);
+	char* r;
+	r = strd(str1, str2);
+	
+	free(str1);
+	free(str2);
+	
+	printf("%s", r);
+	free(r);
 }
 
 void strpdi(char *str1, char *str2)	{
 
-		char * r = (char *)malloc(MAX_FILE_PATH_LENGTH);
-		r = strdi(str1, str2);
-		
-		free(str1);
-		free(str2);
-		
-		printf("%s", r);
-		free(r);
+	char* r;
+	r = strdi(str1, str2);
+	
+	free(str1);
+	free(str2);
+	
+	printf("%s", r);
+	free(r);
 }
