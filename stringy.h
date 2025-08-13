@@ -3,11 +3,16 @@
 #ifndef DAVELIB_STRINGY_H
 #define DAVELIB_STRINGY_H
 
+#ifdef _cplusplus_
+extern "C"	{
+#endif
+
+#include <stdint.h>
 #include <stdio.h>
 
-typedef struct stringy_t	{
+typedef struct StringyI	{
 	
-	unsigned long long 	(*strlen)			( char* ); 
+	uint64_t 	(*strlen)			( char* ); 
 	char* 				(*getstring) 		( char* );
 	char* 				(*substring)		( char*, unsigned long long, unsigned long long );
 	char*				(*concat)			( char*,char* );
@@ -17,17 +22,21 @@ typedef struct stringy_t	{
 	char*				(*safecat)			( char*, char* );
 	char* 				(*trim)				( char* );
 	char**				(*split)			( char*, char, unsigned max );
-	long long			(*find_first_of)	( char*, char );
+	uint64_t			(*find_first_of)	( char*, char );
 	void				(*free)				( char* );
+	char*				(*fmt)				( char* );
 	
 	void 				(*nl)				();
 	
 	FILE*				(*writeToFile)		( FILE*, char*, uint8_t );
 
-} stringy_t;
+} StringyI;
 
-extern struct stringy_t* stringy;
+extern struct StringyI* stringy;
 extern void InitStringy();
 
+#ifdef _cplusplus_
+}
 #endif
 
+#endif

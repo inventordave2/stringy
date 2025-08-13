@@ -9,7 +9,7 @@
 enum status { OK, NO_INPUT, QUIT } status;
 enum status input(char* prmpt, char* buff, size_t sz)	{
 
-    int ch, extra;
+    int ch;
 
     // Get line with buffer overrun protection.
     if (prmpt != NULL) {
@@ -25,9 +25,8 @@ enum status input(char* prmpt, char* buff, size_t sz)	{
     // to end of line so that excess doesn't affect the next call.
     if (buff[strlen(buff)-1] != '\n') {
 		
-        extra = 0;
         while (((ch = getchar()) != '\n') && (ch != EOF))
-            extra = 1;
+            ;
         
 		//return (extra == 1) ? TOO_LONG : OK;
     }
@@ -55,9 +54,12 @@ enum status inputNum(char *prmpt, char *buff, size_t sz)	{
 	if(input(prmpt, buff, 1) != OK)
 		return NO_INPUT;
 	
-    if (atoi(buff) == 0)
+    if (atoi(buff) == 0)	{
+		
         return NO_INPUT;
-
+	}
+	
+	
 	return OK;
 }
 

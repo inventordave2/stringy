@@ -3,12 +3,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "./../regexp/regexp.h"
 #include "./stringy.h"
 #include "./str_concat.h"
+
+#ifdef COLOURMODE
 #include "./../colour/colour.h"
+#endif
 
-static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me, Da Dizzle. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)";
+/*
+Public.
+*/
+void InitStringy();
+struct StringyI* stringy;
 
+/*
+Static.
+*/
+static uint8_t stringy_activated = 0;
+static void InitStringyI();
+
+static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me, The Dizzle. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)\0";
 
 static char* substring( char*, unsigned long long start, unsigned long long end );
 //static char* ull2digitstr( unsigned long long );
@@ -25,6 +41,7 @@ uint64_t find_next_of( char*, char );
 void free_stringy( char* ptr );
 static void nl();
 static FILE* writeToFile ( FILE*, char*, uint8_t );
+static char* STUB( char* );
 
 
 static char* concat( char* lhs, char* rhs )	{
@@ -62,14 +79,13 @@ static FILE* writeToFile( FILE* fp, char* str, uint8_t ft )	{
 	return f;
 }		
 
-
 static void nl()	{
 	
 	printf( "\n" );
 	return;
 }
 
-uint64_t find_first_of( char* str, char delim )	{
+static uint64_t find_first_of( char* str, char delim )	{
 	
 	unsigned x = 0;
 	
@@ -84,7 +100,7 @@ uint64_t find_first_of( char* str, char delim )	{
 	return -1;
 }
 
-uint64_t find_next_of( char* str, char delim )	{
+static uint64_t find_next_of( char* str, char delim )	{
 
 	static unsigned y = 0;
 	unsigned x = y;
@@ -107,16 +123,31 @@ uint64_t find_next_of( char* str, char delim )	{
 	return -1;
 }
 
-
-struct stringy_t* stringy;
-static uint8_t stringy_activated = 0;
-
 void InitStringy()	{
+	
+	InitStringyI();
+	return;
+}
+
+static char* STUB( char* str )	{
+	
+	return str;
+}
+
+
+static void InitStringyI()	{
 
 	if( stringy_activated==1 )
 		return;
 	
-	struct stringy_t* _stringy = (struct stringy_t*)malloc( sizeof( struct stringy_t ) );
+	struct StringyI* _stringy = (struct StringyI*)malloc( sizeof( struct StringyI ) );
+	
+	#ifdef COLOURMODE
+	_stringy_->fmt = colour->fmt;
+	#else
+	_stringy_->fmt = STUB;
+	#endif
+	
 	_stringy->getstring	= getstring;
 	_stringy->substring	= substring;
 	_stringy->zalloc		= zalloc;
@@ -137,13 +168,12 @@ void InitStringy()	{
 	return;
 }
 
-void free_stringy( char* ptr )	{
+static void free_stringy( char* ptr )	{
 
 	free( ptr );
 	ptr = NULL;
 	return;
 }
-
 
 static char* safecat( char* head, char* tail )	{
 	
@@ -195,7 +225,7 @@ static char* trim( char* in )	{
 		goto loop2;
 	}
 	
-	return stringy->substring( in, x, y );
+	return substring( in, x, y );
 }
 
 static unsigned long long strlen_( char* str )	{
@@ -223,6 +253,9 @@ static char* zalloc( unsigned long long size )	{
 
 static char* getstring( char* str )	{
 
+	if( str==NULL )
+		return (char*)calloc( 1, sizeof(char*) );
+	
 	unsigned long long strlen_str = strlen( str );
 	char* r = (char*) malloc( strlen_str+1 );
 	char* _ = r;
@@ -236,13 +269,12 @@ static char* getstring( char* str )	{
 	return r;
 }
 
-int cmp(char* a, char* b) { // returns true (1) if the 2 c-strings match, as it should...
+static int cmp(char* a, char* b) { // returns true (1) if the 2 c-strings match, as it should...
 
 	return (strcmp(a, b) == 0);
 }
 
-
-void rotate(unsigned int* argc, char* argv[] )	{
+static void rotate(unsigned int* argc, char* argv[] )	{
 
 	for(int i = 0; i < (*argc - 1); i++)	{
 		
@@ -292,7 +324,7 @@ static char* substring( char* str, unsigned long long start, unsigned long long 
 	return r;
 }
 
-void flipstr(char * in, char * out)	{
+static void flipstr(char * in, char * out)	{
 	
 	unsigned int len = strlen(in);
 	
@@ -301,6 +333,5 @@ void flipstr(char * in, char * out)	{
 	
 	*out = '\0';
 }
-
 
 #include "./str_concat.c"
