@@ -6,7 +6,7 @@
 #include "./str_concat.h"
 #include "./../colour/colour.h"
 
-enum status { OK, NO_INPUT, QUIT } status;
+
 enum status input(char* prmpt, char* buff, size_t sz)	{
 
     int ch;

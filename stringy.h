@@ -10,9 +10,9 @@ extern "C"	{
 #include <stdint.h>
 #include <stdio.h>
 
-typedef struct StringyI	{
+typedef struct stringy_t	{
 	
-	uint64_t 	(*strlen)			( char* ); 
+	uint64_t 			(*strlen)			( char* ); 
 	char* 				(*getstring) 		( char* );
 	char* 				(*substring)		( char*, unsigned long long, unsigned long long );
 	char*				(*concat)			( char*,char* );
@@ -30,10 +30,11 @@ typedef struct StringyI	{
 	
 	FILE*				(*writeToFile)		( FILE*, char*, uint8_t );
 
-} StringyI;
+} stringy_t;
 
-extern struct StringyI* stringy;
+extern struct stringy_t* stringy;
 extern void InitStringy();
+extern void DeInitStringy();
 
 #ifdef _cplusplus_
 }

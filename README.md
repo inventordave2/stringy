@@ -1,6 +1,6 @@
 # stringy v0.1
 
-typedef struct StringyI	{
+typedef struct stringy_t	{
 	 
 	uint64_t 	(*strlen)			( char* ); 
 	char* 				(*getstring) 		( char* );
@@ -38,7 +38,7 @@ typedef struct StringyI	{
 	REQ <- "/products/listing.html?access_token=[some given access token for OAuth2 access, for example]+category=food_stores"
 	RESP <- [whatever the .HTML output string would be if handling this sample domain request]
 	
-	This example is what you might expect to be happening inside a web server, or any network responder. If the Stringy library sends a string to a formatting subsystem, for the processing of tags (such as [bright_magenta] in ANSIVT, or <div> in HTML5), it needs to know which tags to insert, at what offsets within the INput string, but often the user providing the IN string will know what they are, and insert them into the string before passing it as an IN string to Stringy.
+	This example is what you might expect to be happening inside a web server, or any network responder. If the Stringy library sends a string to a formatting subsystem, for the processing of tags (such as [brightmagenta] in ANSIVT, or <div> in HTML5), it needs to know which tags to insert, at what offsets within the INput string, but often the user providing the IN string will know what they are, and insert them into the string before passing it as an IN string to Stringy.
 	
 	
 	Example:
@@ -48,7 +48,7 @@ typedef struct StringyI	{
 	
 	Having computed the input equation through ALGAE, and receiving the result (assumed here to be 6.28318), then generating the output HTML fragment 
 
-} StringyI;
+} stringy_t;
 
 TODO: Integration with regex, so having the stringy API in-process gives the user regex test/extract/replace functions.
 

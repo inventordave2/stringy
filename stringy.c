@@ -16,8 +16,8 @@
 Public.
 */
 void InitStringy();
-struct StringyI* stringy;
-
+struct stringy_t* stringy;
+void DeInitStringy();
 /*
 Static.
 */
@@ -36,9 +36,9 @@ static void flipstr(char * in, char * out);
 static char** split( char*, char delim, unsigned );
 static char* trim( char* );
 static char* safecat( char*,char* );
-uint64_t find_first_of( char*, char );
-uint64_t find_next_of( char*, char );
-void free_stringy( char* ptr );
+static uint64_t find_first_of( char*, char );
+static uint64_t find_next_of( char*, char );
+static void free_stringy( char* ptr );
 static void nl();
 static FILE* writeToFile ( FILE*, char*, uint8_t );
 static char* STUB( char* );
@@ -140,12 +140,12 @@ static void InitStringyI()	{
 	if( stringy_activated==1 )
 		return;
 	
-	struct StringyI* _stringy = (struct StringyI*)malloc( sizeof( struct StringyI ) );
+	struct stringy_t* _stringy = (struct stringy_t*)malloc( sizeof( struct stringy_t ) );
 	
 	#ifdef COLOURMODE
-	_stringy_->fmt = colour->fmt;
+	_stringy->fmt = colour->fmt;
 	#else
-	_stringy_->fmt = STUB;
+	_stringy->fmt = STUB;
 	#endif
 	
 	_stringy->getstring	= getstring;
@@ -269,7 +269,7 @@ static char* getstring( char* str )	{
 	return r;
 }
 
-static int cmp(char* a, char* b) { // returns true (1) if the 2 c-strings match, as it should...
+static inline int cmp(char* a, char* b) { // returns true (1) if the 2 c-strings match, as it should...
 
 	return (strcmp(a, b) == 0);
 }

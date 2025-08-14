@@ -41,6 +41,7 @@ frees/deletes the references to str1 & str2.
 void strpd(char *str1, char *str2);
 void strpdi(char *str1, char *str2);
 
+enum status { OK, NO_INPUT, QUIT } status;
 enum status input(char *prmpt, char *buff, size_t sz);
 enum status inputNum(char *prmpt, char *buff, size_t sz);
 
