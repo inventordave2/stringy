@@ -15,14 +15,17 @@
 /*
 Public.
 */
-void InitStringy();
+
 struct stringy_t* stringy;
+void InitStringy();
 void DeInitStringy();
+ 
 /*
 Static.
 */
 static uint8_t stringy_activated = 0;
 static void InitStringyI();
+static void DeInitStringyI();
 
 static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me, The Dizzle. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)\0";
 
@@ -63,7 +66,6 @@ static char* concat( char* lhs, char* rhs )	{
 static FILE* writeToFile( FILE* fp, char* str, uint8_t ft )	{
 
 	FILE* f;
-	uint8_t td = 0;
 	uint8_t flag = 0;
 
 	if( fp==NULL )
@@ -256,14 +258,17 @@ static char* getstring( char* str )	{
 	if( str==NULL )
 		return (char*)calloc( 1, sizeof(char*) );
 	
-	unsigned long long strlen_str = strlen( str );
+	unsigned long long strlen_str = 0;
+	strlen_str = strlen( str );
 	char* r = (char*) malloc( strlen_str+1 );
 	char* _ = r;
 	
 	unsigned long long i = 0;
-	for( i; i < strlen_str; i++ )
+	for( i; i < strlen_str; i++ )	{
+		
 		*_++ = *str++;
-
+	}
+	
 	*_ = (char)0;
 	
 	return r;
