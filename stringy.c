@@ -16,18 +16,27 @@
 Public.
 */
 
-struct stringy_t* stringy;
+struct Stringy* stringy;
 void InitStringy();
 void DeInitStringy();
  
 /*
 Static.
 */
-static uint8_t stringy_activated = 0;
+static int stringy_initialised = 0;
 static void InitStringyI();
 static void DeInitStringyI();
 
-static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me, The Dizzle. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)\0";
+static void DeInitStringyI()	{
+
+	if( stringy!= NULL )
+		free( stringy );
+
+	stringy_initialised = 0;
+	return;
+}
+
+static char desc[] = "Dave's STRINGY library, a 'readme'-first, flexible, target-avoiding masterpiece, written with th 5d Warrior approach of an old-school, old-guard, coding legend, me. Generate, clip, manipulate, format using ANSIVT100 (with Stringy in COLOURMODE, thereby utilising Dave's COLOURLIB. Search strings, buffers, arrays...)\0";
 
 static char* substring( char*, unsigned long long start, unsigned long long end );
 //static char* ull2digitstr( unsigned long long );
@@ -36,16 +45,16 @@ static char* concat( char*,char* );
 static char* zalloc( unsigned long long size );
 static unsigned long long strlen_( char* str );
 static void flipstr(char * in, char * out);
-static char** split( char*, char delim, unsigned );
+static char** split( char*, char delim );
+static char** split2( char* line, char delim );
 static char* trim( char* );
 static char* safecat( char*,char* );
 static uint64_t find_first_of( char*, char );
 static uint64_t find_next_of( char*, char );
-static void free_stringy( char* ptr );
+static int freestringy( char* ptr );
 static void nl();
 static FILE* writeToFile ( FILE*, char*, uint8_t );
-static char* STUB( char* );
-
+static char* stub( char* );
 
 static char* concat( char* lhs, char* rhs )	{
 	
@@ -131,7 +140,65 @@ void InitStringy()	{
 	return;
 }
 
-static char* STUB( char* str )	{
+static char** split( char* line, char delim )	{
+
+	char** cl = (char**)calloc( strlen(line) + 1,1 );
+	char** _;
+
+	char* t = (char*) malloc( strlen( line )+1 );
+	
+	int x, z = 0;
+	for( x=0; x<strlen( line ); x++ )	{
+
+		if( line[x] == delim )	{
+
+			t[ z ] = '\0';
+			*_++ = stringy->getstring( t );
+			z = 0;
+			
+			continue;
+		}
+
+		t[ z++ ] = line[ x ];
+	}
+
+	if( z!=0 )
+		t[ z ] = '\0';
+
+	return cl;
+}
+
+
+static char** split2( char* line, char delim )	{
+
+	char** cl = (char**)calloc( strlen(line) + 1,1 );
+	char** _;
+
+	char* t = (char*) malloc( strlen( line )+1 );
+	
+	int x, z = 0;
+	for( x=0; x<strlen( line ); x++ )	{
+
+		if( line[x] == delim )	{
+
+			t[ z ] = '\0';
+			*_++ = stringy->getstring( t );
+			z = 0;
+			
+			continue;
+		}
+
+		t[ z++ ] = line[ x ];
+	}
+
+	if( z!=0 )
+		t[ z ] = '\0';
+
+	return cl;
+}
+
+
+static char* stub( char* str )	{
 	
 	return str;
 }
@@ -139,42 +206,46 @@ static char* STUB( char* str )	{
 
 static void InitStringyI()	{
 
-	if( stringy_activated==1 )
+	if( stringy_initialised==1 )
 		return;
-	
-	struct stringy_t* _stringy = (struct stringy_t*)malloc( sizeof( struct stringy_t ) );
-	
+
+	stringy = (struct Stringy*)malloc( sizeof( struct Stringy ) );
+
 	#ifdef COLOURMODE
-	_stringy->fmt = colour->fmt;
+	stringy->fmt = colour->fmt;
 	#else
-	_stringy->fmt = STUB;
+	stringy->fmt = stub;
 	#endif
-	
-	_stringy->getstring	= getstring;
-	_stringy->substring	= substring;
-	_stringy->zalloc		= zalloc;
-	//_stringy->ull2digitstr= ull2digitstr;
-	_stringy->strlen		= strlen_;
-	_stringy->flipstr	= flipstr;
-	_stringy->trim		= trim;
-	//_stringy->split		= split;
-	_stringy->find_first_of = find_first_of;
-	_stringy->safecat = safecat;
-	_stringy->free = free_stringy;
-  	_stringy->nl = nl;
-	_stringy->concat = concat;
-	stringy = _stringy;
-	
-	
-	stringy_activated = 1;
+
+	stringy->getstring	= getstring;
+	stringy->substring	= substring;
+	stringy->zalloc		= zalloc;
+	//stringy->ull2digitstr= ull2digitstr;
+	stringy->strlen		= strlen_;
+	stringy->flipstr	= flipstr;
+	stringy->trim		= trim;
+	stringy->split		= split;
+	stringy->split2		= split2;
+	stringy->find_first_of = find_first_of;
+	stringy->safecat = safecat;
+	stringy->free = freestringy;
+  	stringy->nl = nl;
+	stringy->concat = concat;
+	stringy->stub = stub;
+	stringy->desc = (const char*) getstring( (char*)desc );
+
+	stringy_initialised = 1;
 	return;
 }
 
-static void free_stringy( char* ptr )	{
+static int freestringy( char* ptr )	{
 
+	if( ptr == NULL )
+		return 0;
+	
 	free( ptr );
 	ptr = NULL;
-	return;
+	return 1;
 }
 
 static char* safecat( char* head, char* tail )	{
@@ -260,7 +331,7 @@ static char* getstring( char* str )	{
 	
 	unsigned long long strlen_str = 0;
 	strlen_str = strlen( str );
-	char* r = (char*) malloc( strlen_str+1 );
+	char* r = (char*) calloc( strlen_str+1,1 );
 	char* _ = r;
 	
 	unsigned long long i = 0;

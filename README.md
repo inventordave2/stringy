@@ -1,6 +1,6 @@
 # stringy v0.1
 
-typedef struct stringy_t	{
+typedef struct Stringy	{
 	 
 	uint64_t 	(*strlen)			( char* ); 
 	char* 				(*getstring) 		( char* );
@@ -48,7 +48,7 @@ typedef struct stringy_t	{
 	
 	Having computed the input equation through ALGAE, and receiving the result (assumed here to be 6.28318), then generating the output HTML fragment 
 
-} stringy_t;
+} Stringy;
 
 TODO: Integration with regex, so having the stringy API in-process gives the user regex test/extract/replace functions.
 
